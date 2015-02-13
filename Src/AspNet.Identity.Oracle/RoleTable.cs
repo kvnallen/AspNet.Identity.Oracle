@@ -8,9 +8,9 @@ namespace AspNet.Identity.Oracle
     /// <summary>
     /// Class that represents the Role table in the Oracle Database
     /// </summary>
-    public class RoleTable 
+    public class RoleTable
     {
-        private OracleDatabase _database;
+        private readonly OracleDatabase _database;
 
         /// <summary>
         /// Constructor that takes a Oracle Database instance 
@@ -44,11 +44,12 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public int Insert(IdentityRole role)
         {
-            const string commandText = @"INSERT INTO IDSSO_ROLES (ID, NAME) VALUES (:ID, :NAME)";
+            const string commandText = @"INSERT INTO IDSSO_ROLES (ID, NAME, DESCRIPTION) VALUES (:ID, :NAME, :DESCRIPTION)";
             var parameters = new List<OracleParameter>
             {
                 new OracleParameter {ParameterName = "ID", Value = role.Id, OracleDbType = OracleDbType.Varchar2 },
                 new OracleParameter {ParameterName = "NAME", Value = role.Name, OracleDbType = OracleDbType.Varchar2 },
+                new OracleParameter {ParameterName = "DESCRIPTION", Value = role.Description, OracleDbType = OracleDbType.Varchar2 },
             };
 
             return _database.Execute(commandText, parameters);
@@ -88,25 +89,6 @@ namespace AspNet.Identity.Oracle
         }
 
         /// <summary>
-        /// Gets the IdentityRole given the role Id
-        /// </summary>
-        /// <param name="roleId"></param>
-        /// <returns></returns>
-        public IdentityRole GetRoleById(string roleId)
-        {
-            var roleName = GetRoleName(roleId);
-            IdentityRole role = null;
-
-            if(roleName != null)
-            {
-                role = new IdentityRole(roleName, roleId);
-            }
-
-            return role;
-
-        }
-
-        /// <summary>
         /// Gets the IdentityRole given the role name
         /// </summary>
         /// <param name="roleName"></param>
@@ -131,13 +113,14 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public int Update(IdentityRole role)
         {
-            const string commandText = @"UPDATE IDSSO_ROLES SET NAME = :NAME WHERE ID = :ID";
+            const string commandText = @"UPDATE IDSSO_ROLES SET NAME = :NAME , DESCRIPTION = :DESCRIPTION WHERE ID = :ID";
             var parameters = new List<OracleParameter>
             {
                 new OracleParameter {ParameterName = "NAME", Value = role.Name, OracleDbType = OracleDbType.Varchar2 },
                 new OracleParameter {ParameterName = "ID", Value = role.Id, OracleDbType = OracleDbType.Varchar2 },
+                new OracleParameter {ParameterName = "DESCRIPTION", Value = role.Description, OracleDbType = OracleDbType.Varchar2 },
             };
-            
+
             return _database.Execute(commandText, parameters);
         }
 
@@ -147,14 +130,35 @@ namespace AspNet.Identity.Oracle
         /// <returns>IdentityRole</returns>
         public IEnumerable<IdentityRole> GetRoles()
         {
-            const string commandText = @"SELECT ID, NAME FROM IDSSO_ROLES";
+            const string commandText = @"SELECT ID, NAME, DESCRIPTION FROM IDSSO_ROLES";
             var results = _database.Query(commandText, null);
 
             return results.Select(result => new IdentityRole
             {
                 Id = string.IsNullOrEmpty(result["ID"]) ? null : result["ID"],
                 Name = string.IsNullOrEmpty(result["NAME"]) ? null : result["NAME"],
+                Description = string.IsNullOrEmpty(result["DESCRIPTION"]) ? null : result["DESCRIPTION"]
+
             }).ToList();
+        }
+
+        public IdentityRole GetRoleById(string id)
+        {
+            const string commandText = @"SELECT ID, NAME, DESCRIPTION FROM IDSSO_ROLES WHERE ID = :ID";
+            var parameters = new List<OracleParameter>
+            {
+                new OracleParameter {ParameterName = "ID", Value = id, OracleDbType = OracleDbType.Varchar2 },
+            };
+
+            var results = _database.Query(commandText, parameters);
+
+            return results.Select(result => new IdentityRole
+            {
+                Id = string.IsNullOrEmpty(result["ID"]) ? null : result["ID"],
+                Name = string.IsNullOrEmpty(result["NAME"]) ? null : result["NAME"],
+                Description = string.IsNullOrEmpty(result["DESCRIPTION"]) ? null : result["DESCRIPTION"]
+
+            }).First();
         }
     }
 }

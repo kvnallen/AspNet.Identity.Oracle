@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspNet.Identity.Oracle
 {
@@ -20,9 +21,11 @@ namespace AspNet.Identity.Oracle
         /// Constructor that takes names as argument 
         /// </summary>
         /// <param name="name"></param>
-        public IdentityRole(string name) : this()
+        public IdentityRole(string name)
+            : this()
         {
             Name = name;
+            
         }
 
         public IdentityRole(string name, string id)
@@ -39,6 +42,9 @@ namespace AspNet.Identity.Oracle
         /// <summary>
         /// Role name
         /// </summary>
+        
         public string Name { get; set; }
+
+        public string Description { get; set; }
     }
 }

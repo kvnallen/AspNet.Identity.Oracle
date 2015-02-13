@@ -1,0 +1,18 @@
+﻿<Properties StartupItem="SampleWebSite\SampleWebSite.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="ChromeHTML" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="AspNet.Identity.Oracle\OracleDatabase.cs">
+    <Files>
+      <File FileName="AspNet.Identity.Oracle\IdentityUser.cs" Line="6" Column="6" />
+      <File FileName="AspNet.Identity.Oracle\UserLoginsTable.cs" Line="131" Column="131" />
+      <File FileName="AspNet.Identity.Oracle\UserClaimsTable.cs" Line="90" Column="90" />
+      <File FileName="AspNet.Identity.Oracle\OracleDatabase.cs" Line="7" Column="7" />
+      <File FileName="AspNet.Identity.Oracle\RoleTable.cs" Line="1" Column="1" />
+      <File FileName="AspNet.Identity.Oracle\UserRoleTable.cs" Line="45" Column="45" />
+      <File FileName="AspNet.Identity.Oracle\UserTable.cs" Line="35" Column="35" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

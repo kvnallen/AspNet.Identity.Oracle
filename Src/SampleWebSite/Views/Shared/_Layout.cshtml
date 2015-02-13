@@ -1,46 +1,91 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Styles.Render("~/Content/css")
+
     @Scripts.Render("~/bundles/modernizr")
+    <link href="http://www2.unimedcaruaru.com.br:8093/design/Content/unimed-design.css" rel="stylesheet" />
 
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", null, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
 
-                    @if (Request.IsAuthenticated && User.IsInRole("Admin")) {
-                        <li>@Html.ActionLink("RolesAdmin", "Index", "RolesAdmin")</li>
-                        <li>@Html.ActionLink("UsersAdmin", "Index", "UsersAdmin")</li>
-                    }
-                </ul>
-                @Html.Partial("_LoginPartial")
+    <header>
+        <div class="grupo">
+            <div class="coluna item_1_de_4">
+                <div class="espaco-marca">
+                    <a class="logo" href="" rel="home">Unimed Caruaru</a>
+                </div>
             </div>
+            <div class="coluna item_2_de_4">
+                <div class="menu">
+                    <nav class="menu-navegacao">
+                        <ul>
+                            <li>
+                                <a href="#">Administração</a>
+                                <div class="sub-menu grupo">
+                                    <div class="coluna item_1_de_2">
+                                        <h4>Serviços para os clientes</h4>
+                                        <ul>
+                                            @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                                            {
+                                                <li>@Html.ActionLink("Administração de Regras", "Index", "RolesAdmin")</li>
+                                                <li>@Html.ActionLink("Administração de Usuários", "Index", "UsersAdmin")</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li>
+                                    @Html.ActionLink("Olá,  " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                                </li>
+                                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Sair</a></li>
+                                }
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </header>
+
+
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+
     </div>
+
+    <footer>
+        <div class="grupo">
+            <div class="coluna item_1_de_4">
+                <ul>
+                    <li><a href="">Faturas</a></li>
+                </ul>
+            </div>
+            <div class="coluna item_1_de_4">
+                <ul>
+                    <li><a href="">Produção médica</a></li>
+                </ul>
+            </div>
+            <div class="coluna item_1_de_4">
+                <ul>
+                    <li><a href="">Colaboradores</a></li>
+                </ul>
+            </div>
+            <div class="coluna item_1_de_4">
+                <a href="" class="logo-rodape"></a>
+                <label class="copyright">© Desenvolvido na Unimed Caruaru. Todos os direitos reservados.</label>
+            </div>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

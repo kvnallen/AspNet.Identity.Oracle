@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Oracle.DataAccess.Client;
+using System;
 using System.Collections.Generic;
-using Oracle.DataAccess.Client;
+
+
 
 namespace AspNet.Identity.Oracle
 {

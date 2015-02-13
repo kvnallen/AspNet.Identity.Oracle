@@ -30,9 +30,10 @@ namespace AspNet.Identity.Oracle
         public int Delete(IdentityUser user, UserLoginInfo login)
         {
             const string commandText = @"DELETE FROM IDSSO_USERLOGINS WHERE USERID = :USERID AND LOGINPROVIDER = :LOGINPROVIDER AND PROVIDERKEY = :PROVIDERKEY";
+
             var parameters = new List<OracleParameter>
             {
-                new OracleParameter{ ParameterName = "USERID", Value = user.Id, OracleDbType = OracleDbType.Varchar2 },
+				new OracleParameter{ ParameterName = "USERID", Value = user.Id, OracleDbType = OracleDbType.Varchar2 },
                 new OracleParameter{ ParameterName = "LOGINPROVIDER", Value = login.LoginProvider, OracleDbType = OracleDbType.Varchar2 },
                 new OracleParameter{ ParameterName = "PROVIDERKEY", Value = login.ProviderKey, OracleDbType = OracleDbType.Varchar2 },
             };

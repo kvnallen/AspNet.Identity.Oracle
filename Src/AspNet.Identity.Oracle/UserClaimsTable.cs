@@ -10,7 +10,7 @@ namespace AspNet.Identity.Oracle
     /// </summary>
     public class UserClaimsTable
     {
-        private OracleDatabase _database;
+        private readonly OracleDatabase _database;
 
         /// <summary>
         /// Constructor that takes a Oracle Database instance 
@@ -32,7 +32,7 @@ namespace AspNet.Identity.Oracle
             const string commandText = @"SELECT * FROM IDSSO_USERCLAIMS WHERE USERID = :USERID";
             var parameters = new List<OracleParameter>
             {
-                new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType = OracleDbType.Varchar2 },
+				new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType = OracleDbType.Varchar2 },
             };
 
             var rows = _database.Query(commandText, parameters);
@@ -54,7 +54,7 @@ namespace AspNet.Identity.Oracle
             const string commandText = @"DELETE FROM IDSSO_USERCLAIMS WHERE USERID = :USERID";
             var parameters = new List<OracleParameter>
             {
-                new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType = OracleDbType.Varchar2 },
+				new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType= OracleDbType.Varchar2 },
             };
 
             return _database.Execute(commandText, parameters);
@@ -71,7 +71,7 @@ namespace AspNet.Identity.Oracle
             const string commandText = @"INSERT INTO IDSSO_USERCLAIMS (CLAIMVALUE, CLAIMTYPE, USERID) VALUES (:VALUE, :TYPE, :USERID)";
             var parameters = new List<OracleParameter>
             {
-                new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType = OracleDbType.Varchar2 },
+				new OracleParameter{ ParameterName = "USERID", Value = userId, OracleDbType= OracleDbType.Varchar2 },
                 new OracleParameter{ ParameterName = "VALUE", Value = claim.Value, OracleDbType = OracleDbType.Clob },
                 new OracleParameter{ ParameterName = "TYPE", Value = claim.Type, OracleDbType = OracleDbType.Clob },
             };

@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Threading;
 using Oracle.DataAccess.Client;
+using Oracle.DataAccess.Client;
 
 namespace AspNet.Identity.Oracle
 {

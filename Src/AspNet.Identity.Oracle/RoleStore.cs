@@ -12,7 +12,7 @@ namespace AspNet.Identity.Oracle
     public class RoleStore<TRole> : IQueryableRoleStore<TRole>
         where TRole : IdentityRole
     {
-        private RoleTable roleTable;
+        private readonly RoleTable _roleTable;
         public OracleDatabase Database { get; private set; }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace AspNet.Identity.Oracle
             get
             {
                 // If you have some performance issues, then you can implement the IQueryable.
-                var x = roleTable.GetRoles() as List<TRole>;
+                var x = _roleTable.GetRoles() as List<TRole>;
                 return x != null ? x.AsQueryable() : null;
             }
         }
@@ -46,7 +46,7 @@ namespace AspNet.Identity.Oracle
         public RoleStore(OracleDatabase database)
         {
             Database = database;
-            roleTable = new RoleTable(database);
+            _roleTable = new RoleTable(database);
         }
 
         public Task CreateAsync(TRole role)
@@ -56,7 +56,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("role");
             }
 
-            roleTable.Insert(role);
+            _roleTable.Insert(role);
 
             return Task.FromResult<object>(null);
         }
@@ -68,21 +68,21 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("role");
             }
 
-            roleTable.Delete(role.Id);
+            _roleTable.Delete(role.Id);
 
             return Task.FromResult<Object>(null);
         }
 
         public Task<TRole> FindByIdAsync(string roleId)
         {
-            var result = roleTable.GetRoleById(roleId) as TRole;
+            var result = _roleTable.GetRoleById(roleId) as TRole;
 
             return Task.FromResult(result);
         }
 
         public Task<TRole> FindByNameAsync(string roleName)
         {
-            var result = roleTable.GetRoleByName(roleName) as TRole;
+            var result = _roleTable.GetRoleByName(roleName) as TRole;
 
             return Task.FromResult(result);
         }
@@ -94,7 +94,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("role");
             }
 
-            roleTable.Update(role);
+            _roleTable.Update(role);
 
             return Task.FromResult<Object>(null);
         }

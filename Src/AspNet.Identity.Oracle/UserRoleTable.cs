@@ -2,6 +2,7 @@
 using System.Linq;
 using Oracle.DataAccess.Client;
 
+
 namespace AspNet.Identity.Oracle
 {
     /// <summary>
