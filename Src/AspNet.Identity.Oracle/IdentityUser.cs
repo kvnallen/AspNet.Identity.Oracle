@@ -86,5 +86,7 @@ namespace AspNet.Identity.Oracle
         ///     Used to record failures for the purposes of lockout
         /// </summary>
         public virtual int AccessFailedCount { get; set; }
+
+        public bool Enabled { get; set; }
     }
 }

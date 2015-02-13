@@ -23,11 +23,11 @@ namespace AspNet.Identity.Oracle
         IUserStore<TUser>
         where TUser : IdentityUser
     {
-        private UserTable<TUser> userTable;
-        private RoleTable roleTable;
-        private UserRolesTable userRolesTable;
-        private UserClaimsTable userClaimsTable;
-        private UserLoginsTable userLoginsTable;
+        private readonly UserTable<TUser> _userTable;
+        private readonly RoleTable _roleTable;
+        private readonly UserRolesTable _userRolesTable;
+        private readonly UserClaimsTable _userClaimsTable;
+        private readonly UserLoginsTable _userLoginsTable;
         public OracleDatabase Database { get; private set; }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace AspNet.Identity.Oracle
             get
             {
                 // If you have some performance issues, then you can implement the IQueryable.
-                var x = userTable.GetUsers() as List<TUser>;
+                var x = _userTable.GetUsers() as List<TUser>;
                 return x != null ? x.AsQueryable() : null;
             }
         }
@@ -61,11 +61,11 @@ namespace AspNet.Identity.Oracle
         public UserStore(OracleDatabase database)
         {
             Database = database;
-            userTable = new UserTable<TUser>(database);
-            roleTable = new RoleTable(database);
-            userRolesTable = new UserRolesTable(database);
-            userClaimsTable = new UserClaimsTable(database);
-            userLoginsTable = new UserLoginsTable(database);
+            _userTable = new UserTable<TUser>(database);
+            _roleTable = new RoleTable(database);
+            _userRolesTable = new UserRolesTable(database);
+            _userClaimsTable = new UserClaimsTable(database);
+            _userLoginsTable = new UserLoginsTable(database);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("user");
             }
 
-            userTable.Insert(user);
+            _userTable.Insert(user);
 
             return Task.FromResult<object>(null);
         }
@@ -97,7 +97,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentException("Null or empty argument: userId");
             }
 
-            var result = userTable.GetUserById(userId);
+            var result = _userTable.GetUserById(userId);
 
             return Task.FromResult(result);
         }
@@ -114,7 +114,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentException("Null or empty argument: userName");
             }
 
-            var result = userTable.GetUserByName(userName);
+            var result = _userTable.GetUserByName(userName);
 
             // Should I throw if > 1 user?
             if (result != null && result.Count == 1)
@@ -137,7 +137,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("user");
             }
 
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult<object>(null);
         }
@@ -168,7 +168,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("user");
             }
 
-            userClaimsTable.Insert(claim, user.Id);
+            _userClaimsTable.Insert(claim, user.Id);
 
             return Task.FromResult<object>(null);
         }
@@ -180,7 +180,7 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public Task<IList<Claim>> GetClaimsAsync(TUser user)
         {
-            var identity = userClaimsTable.FindByUserId(user.Id);
+            var identity = _userClaimsTable.FindByUserId(user.Id);
 
             return Task.FromResult<IList<Claim>>(identity.Claims.ToList());
         }
@@ -203,7 +203,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("claim");
             }
 
-            userClaimsTable.Delete(user, claim);
+            _userClaimsTable.Delete(user, claim);
 
             return Task.FromResult<object>(null);
         }
@@ -226,7 +226,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("login");
             }
 
-            userLoginsTable.Insert(user, login);
+            _userLoginsTable.Insert(user, login);
 
             return Task.FromResult<object>(null);
         }
@@ -243,10 +243,10 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("login");
             }
 
-            var userId = userLoginsTable.FindUserIdByLogin(login);
+            var userId = _userLoginsTable.FindUserIdByLogin(login);
             if (userId == null) return Task.FromResult<TUser>(null);
 
-            var user = userTable.GetUserById(userId);
+            var user = _userTable.GetUserById(userId);
 
             return Task.FromResult(user);
         }
@@ -263,7 +263,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("user");
             }
 
-            var logins = userLoginsTable.FindByUserId(user.Id);
+            var logins = _userLoginsTable.FindByUserId(user.Id);
 
             return Task.FromResult<IList<UserLoginInfo>>(logins);
         }
@@ -286,7 +286,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("login");
             }
 
-            userLoginsTable.Delete(user, login);
+            _userLoginsTable.Delete(user, login);
 
             return Task.FromResult<Object>(null);
         }
@@ -309,10 +309,10 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentException("Argument cannot be null or empty: roleName.");
             }
 
-            var roleId = roleTable.GetRoleId(roleName);
+            var roleId = _roleTable.GetRoleId(roleName);
             if (!string.IsNullOrEmpty(roleId))
             {
-                userRolesTable.Insert(user, roleId);
+                _userRolesTable.Insert(user, roleId);
             }
 
             return Task.FromResult<object>(null);
@@ -330,7 +330,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("user");
             }
 
-            var roles = userRolesTable.FindByUserId(user.Id);
+            var roles = _userRolesTable.FindByUserId(user.Id);
             {
                 if (roles != null)
                 {
@@ -359,7 +359,7 @@ namespace AspNet.Identity.Oracle
                 throw new ArgumentNullException("role");
             }
 
-            var roles = userRolesTable.FindByUserId(user.Id);
+            var roles = _userRolesTable.FindByUserId(user.Id);
             {
                 if (roles != null && roles.Contains(role))
                 {
@@ -369,6 +369,16 @@ namespace AspNet.Identity.Oracle
 
             return Task.FromResult(false);
         }
+
+		/// <summary>
+		/// Returns if user is enabled in database
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+	    public bool IsEnabled(string username)
+	    {
+		    return _userTable.IsEnabled(username);
+	    }
 
         /// <summary>
         /// Removes a user from a role
@@ -390,7 +400,7 @@ namespace AspNet.Identity.Oracle
         {
             if (user != null)
             {
-                userTable.Delete(user);
+                _userTable.Delete(user);
             }
 
             return Task.FromResult<Object>(null);
@@ -403,7 +413,7 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public Task<string> GetPasswordHashAsync(TUser user)
         {
-            var passwordHash = userTable.GetPasswordHash(user.Id);
+            var passwordHash = _userTable.GetPasswordHash(user.Id);
 
             return Task.FromResult(passwordHash);
         }
@@ -415,7 +425,7 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public Task<bool> HasPasswordAsync(TUser user)
         {
-            var hasPassword = !string.IsNullOrEmpty(userTable.GetPasswordHash(user.Id));
+            var hasPassword = !string.IsNullOrEmpty(_userTable.GetPasswordHash(user.Id));
 
             return Task.FromResult(Boolean.Parse(hasPassword.ToString()));
         }
@@ -466,7 +476,7 @@ namespace AspNet.Identity.Oracle
         public Task SetEmailAsync(TUser user, string email)
         {
             user.Email = email;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
 
@@ -502,7 +512,7 @@ namespace AspNet.Identity.Oracle
         {
             user.EmailConfirmed = confirmed;
             user.LockoutEnabled = false;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -514,12 +524,12 @@ namespace AspNet.Identity.Oracle
         /// <returns></returns>
         public Task<TUser> FindByEmailAsync(string email)
         {
-            if (String.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email))
             {
                 throw new ArgumentNullException("email");
             }
 
-            var result = userTable.GetUserByEmail(email).FirstOrDefault();
+            var result = _userTable.GetUserByEmail(email).FirstOrDefault();
             return Task.FromResult(result);
         }
 
@@ -532,7 +542,7 @@ namespace AspNet.Identity.Oracle
         public Task SetPhoneNumberAsync(TUser user, string phoneNumber)
         {
             user.PhoneNumber = phoneNumber;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -566,7 +576,7 @@ namespace AspNet.Identity.Oracle
         public Task SetPhoneNumberConfirmedAsync(TUser user, bool confirmed)
         {
             user.PhoneNumberConfirmed = confirmed;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -580,7 +590,7 @@ namespace AspNet.Identity.Oracle
         public Task SetTwoFactorEnabledAsync(TUser user, bool enabled)
         {
             user.TwoFactorEnabled = enabled;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -618,7 +628,7 @@ namespace AspNet.Identity.Oracle
         public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset lockoutEnd)
         {
             user.LockoutEndDateUtc = lockoutEnd.UtcDateTime;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -631,7 +641,7 @@ namespace AspNet.Identity.Oracle
         public Task<int> IncrementAccessFailedCountAsync(TUser user)
         {
             user.AccessFailedCount++;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(user.AccessFailedCount);
         }
@@ -644,7 +654,7 @@ namespace AspNet.Identity.Oracle
         public Task ResetAccessFailedCountAsync(TUser user)
         {
             user.AccessFailedCount = 0;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
@@ -678,7 +688,7 @@ namespace AspNet.Identity.Oracle
         public Task SetLockoutEnabledAsync(TUser user, bool enabled)
         {
             user.LockoutEnabled = enabled;
-            userTable.Update(user);
+            _userTable.Update(user);
 
             return Task.FromResult(0);
         }
