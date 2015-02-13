@@ -44,7 +44,7 @@ namespace AspNet.Identity.Oracle
         {
             int result;
 
-            if (String.IsNullOrEmpty(commandText))
+            if (string.IsNullOrEmpty(commandText))
             {
                 throw new ArgumentException("Command text cannot be null or empty.");
             }

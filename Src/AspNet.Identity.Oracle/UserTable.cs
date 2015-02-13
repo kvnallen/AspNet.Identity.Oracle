@@ -244,6 +244,29 @@ namespace AspNet.Identity.Oracle
 			return Delete(user.Id);
 		}
 
+		public int Enable(string username)
+		{
+			const string commandText = @"UPDATE IDSSO_USERS SET ENABLED = 1 WHERE WHERE USERNAME = :USERNAME";
+			var parameters = new List<OracleParameter>
+			{
+				new OracleParameter {ParameterName = "USERNAME", Value = username, OracleDbType = OracleDbType.Varchar2},
+			};
+
+			return _database.Execute(commandText, parameters);
+		}
+
+		public int Disable(string username)
+		{
+			const string commandText = @"UPDATE IDSSO_USERS SET ENABLED = 0 WHERE WHERE USERNAME = :USERNAME";
+			var parameters = new List<OracleParameter>
+			{
+				new OracleParameter {ParameterName = "USERNAME", Value = username, OracleDbType = OracleDbType.Varchar2},
+			};
+
+			return _database.Execute(commandText, parameters);
+		}
+
+
 		public bool IsEnabled(string username)
 		{
 			const string commandText = @"SELECT 1 FROM IDSSO_USERS WHERE USERNAME = :USERNAME AND ENABLED = 1";

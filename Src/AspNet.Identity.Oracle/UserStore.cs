@@ -380,13 +380,24 @@ namespace AspNet.Identity.Oracle
 		    return _userTable.IsEnabled(username);
 	    }
 
-        /// <summary>
-        /// Removes a user from a role
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="role"></param>
-        /// <returns></returns>
-        public Task RemoveFromRoleAsync(TUser user, string role)
+	
+		public int Enable(string username)
+		{
+			return _userTable.Enable(username);
+		}
+
+		public int Disable(string username)
+		{
+			return _userTable.Disable(username);
+		}
+
+		/// <summary>
+		/// Removes a user from a role
+		/// </summary>
+		/// <param name="user"></param>
+		/// <param name="role"></param>
+		/// <returns></returns>
+		public Task RemoveFromRoleAsync(TUser user, string role)
         {
             throw new NotImplementedException();
         }
